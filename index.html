@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<title>TGB | Grow Together</title>
+
+<style>
+:root {
+  --bg: #080808;
+  --card: #141414;
+  --gold: #e7bd54;
+  --text: #ffffff;
+  --muted: #a4a4a4;
+  --border: #2c2c2c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 17px 20px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: #080808;
+  z-index: 5;
+}
+.logo {
+  color: var(--gold);
+  font-size: 27px;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+.tagline { color: var(--muted); font-size: 10px; letter-spacing: 2px; }
+main { max-width: 900px; margin: auto; padding: 18px; }
+button, input, select { font: inherit; }
+button {
+  border: none;
+  padding: 12px 15px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.gold { background: var(--gold); color: #111; }
+.dark { background: #242424; color: white; border: 1px solid #383838; }
+button:active { transform: scale(.98); }
+input, select {
+  width: 100%;
+  padding: 13px;
+  background: #090909;
+  color: white;
+  border: 1px solid #383838;
+  border-radius: 9px;
+  margin: 8px 0 15px;
+}
+label { color: #ccc; font-size: 13px; }
+h2 { font-size: 21px; margin-top: 0; }
+p { line-height: 1.6; }
+.muted { color: var(--muted); font-size: 13px; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 18px;
+  margin-bottom: 15px;
+}
+.hero {
+  background: linear-gradient(135deg, #30240a, #15120b, #101010);
+  border: 1px solid #59451b;
+  border-radius: 17px;
+  padding: 23px;
+  margin-bottom: 17px;
+}
+.balance {
+  color: var(--gold);
+  font-size: 33px;
+  font-weight: 900;
+  margin: 10px 0;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  margin-bottom: 18px;
+}
+.stat {
+  padding: 15px;
+  border-radius: 12px;
+  background: #121212;
+  border: 1px solid var(--border);
+}
+.stat strong {
+  display: block;
+  color: var(--gold);
+  font-size: 23px;
+  margin-top: 9px;
+}
+.nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 15px;
+}
+.nav button { white-space: nowrap; }
+.page { display: none; }
+.page.active { display: block; }
+.notice {
+  color: #efd48d;
+  background: #211b0c;
+  border: 1px solid #4a3b19;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.item {
+  border-bottom: 1px solid var(--border);
+  padding: 13px 0;
+  overflow-wrap: anywhere;
+}
+.item:last-child { border-bottom: 0; }
+.full { width: 100%; }
+a { color: var(--gold); overflow-wrap: anywhere; }
+footer { text-align: center; color: var(--muted); padding: 25px; font-size: 12px; }
+#message { color: var(--gold); font-size: 13px; }
+@media (min-width: 650px) {
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hero { padding: 30px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div>
+    <div class="logo">TGB</div>
+    <div class="tagline">GROW TOGETHER</div>
+  </div>
+  <button class="gold" onclick="showLogin()">Login</button>
+</header>
+
+<main>
+  <!-- Login and Register -->
+  <section id="auth">
+    <div class="card">
+      <h2 id="authTitle">Welcome to TGB</h2>
+      <p class="muted">Learn, connect and grow together.</p>
+
+      <label>Username</label>
+      <input id="username" placeholder="Your username" maxlength="30">
+
+      <label>Email</label>
+      <input id="email" type="email" placeholder="Enter your email">
+
+      <label>Password</label>
+      <input id="password" type="password" placeholder="At least 6 characters">
+
+      <button class="gold full" onclick="register()">Create Account</button>
+      <button class="dark full" style="margin-top:9px" onclick="login()">Login</button>
+      <p id="authMessage"></p>
+      <div class="notice">
+        ဒီအဆင့်မှာ Login/Register က Demo အတွက်သာ ဖြစ်ပါတယ်။
+        တကယ့် Account စနစ်အတွက် Supabase Authentication ကို ချိတ်ဆက်ရပါမယ်။
+      </div>
+    </div>
+  </section>
+
+  <!-- Main App -->
+  <section id="app" style="display:none">
+    <div class="hero">
+      <span class="muted">YOUR TGB WALLET</span>
+      <div class="balance"><span id="balance">0</span> TGB</div>
+      <div id="welcome">Welcome to TGB</div>
+      <p class="muted">Your journey starts here.</p>
+    </div>
+
+    <div class="grid">
+      <div class="stat"><span class="muted">My Tasks</span><strong id="taskCount">0</strong></div>
+      <div class="stat"><span class="muted">Campaigns</span><strong id="campaignCount">0</strong></div>
+      <div class="stat"><span class="muted">Coin Requests</span><strong id="paymentCount">0</strong></div>
+      <div class="stat"><span class="muted">Account</span><strong style="font-size:18px">Demo</strong></div>
+    </div>
+
+    <div class="nav">
+      <button class="gold" onclick="openPage('dashboard')">Home</button>
+      <button class="dark" onclick="openPage('tasks')">Tasks</button>
+      <button class="dark" onclick="openPage('wallet')">Wallet</button>
+      <button class="dark" onclick="openPage('campaigns')">Campaign</button>
+      <button class="dark" onclick="openPage('buy')">Buy Coin</button>
+    </div>
+
+    <section id="dashboard" class="page active">
+      <div class="card">
+        <h2>Dashboard</h2>
+        <p class="muted">TGB မှ ကြိုဆိုပါတယ်။</p>
+        <div class="notice">
+          လက်ရှိ Version သည် UI Demo ဖြစ်သည်။
+          Browser ထဲက Demo Coin သည် တကယ့်ငွေကြေးတန်ဖိုး မရှိပါ။
+        </div>
+      </div>
+      <div class="card">
+        <h2>Recent Activity</h2>
+        <div id="activity">လှုပ်ရှားမှု မရှိသေးပါ။</div>
+      </div>
+    </section>
+
+    <section id="tasks" class="page">
+      <div class="card">
+        <h2>Available Tasks</h2>
+        <p class="muted">Telegram Channel Join Task များ</p>
+        <div id="taskList">Task မရှိသေးပါ။</div>
+      </div>
+    </section>
+
+    <section id="wallet" class="page">
+      <div class="card">
+        <h2>My Wallet</h2>
+        <div class="balance"><span id="balance2">0</span> TGB</div>
+        <p class="muted">ဒီ Demo Wallet က Browser ထဲမှာသာ သိမ်းထားပါတယ်။ တကယ့်ငွေပေးချေမှုအတွက် မသုံးပါနှင့်။</p>
+        <button class="dark" onclick="showActivity()">Transaction History</button>
+        <div id="walletHistory"></div>
+      </div>
+    </section>
+
+    <section id="campaigns" class="page">
+      <div class="card">
+        <h2>Create Campaign</h2>
+        <label>Campaign Name</label>
+        <input id="campaignName" placeholder="My Telegram Channel">
+        <label>Telegram Link</label>
+        <input id="campaignUrl" placeholder="https://t.me/yourchannel">
+        <label>Reward per Join (Demo TGB)</label>
+        <input id="campaignReward" type="number" min="1" placeholder="5">
+        <button class="gold full" onclick="createCampaign()">Create Campaign</button>
+        <p id="campaignMessage"></p>
+      </div>
+      <div class="card">
+        <h2>My Campaigns</h2>
+        <div id="myCampaigns">Campaign မရှိသေးပါ။</div>
+      </div>
+    </section>
+
+    <section id="buy" class="page">
+      <div class="card">
+        <h2>Buy TGB Coins</h2>
+        <label>Choose Package</label>
+        <select id="coinPackage">
+          <option value="100">100 TGB — Demo</option>
+          <option value="500">500 TGB — Demo</option>
+          <option value="1000">1000 TGB — Demo</option>
+        </select>
+        <label>Payment Method</label>
+        <select id="paymentMethod">
+          <option>KBZPay</option>
+          <option>WavePay</option>
+          <option>AYA Pay</option>
+        </select>
+        <label>Transaction Reference</label>
+        <input id="transactionRef" placeholder="Reference number">
+        <button class="gold full" onclick="requestPayment()">Submit Demo Request</button>
+        <p id="paymentMessage"></p>
+        <div class="notice">
+          ဒီ Demo မှာ တကယ့်ငွေ မလွှဲပါနှင့်။ Coin ဝယ်ယူမှုအတွက် Server-side
+          Payment Verification နဲ့ Admin Approval လိုအပ်ပါတယ်။
+        </div>
+      </div>
+      <div class="card">
+        <h2>My Payment Requests</h2>
+        <div id="payments">Request မရှိသေးပါ။</div>
+      </div>
+    </section>
+
+    <div class="card">
+      <button class="dark full" onclick="logout()">Logout</button>
+    </div>
+  </section>
+</main>
+
+<footer>TGB © 2026 · GROW TOGETHER</footer>
+
+<script>
+/*
+  DEMO ONLY:
+  This version uses browser localStorage.
+  It is not a secure authentication, wallet, or payment system.
+*/
+const KEY = "tgb_demo_v1";
+let state = loadState();
+let current = null;
+
+function loadState() {
+  try {
+    return JSON.parse(localStorage.getItem(KEY)) || {
+      users: {}, campaigns: [], payments: [], activity: []
+    };
+  } catch (e) {
+    return {users:{}, campaigns:[], payments:[], activity:[]};
+  }
+}
+function saveState() {
+  localStorage.setItem(KEY, JSON.stringify(state));
+}
+function $(id) { return document.getElementById(id); }
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  }[c]));
+}
+function showLogin() {
+  $("auth").style.display = "block";
+  $("app").style.display = "none";
+}
+function register() {
+  const username = $("username").value.trim();
+  const email = $("email").value.trim().toLowerCase();
+  const password = $("password").value;
+  if (!username || !email || password.length < 6) {
+    $("authMessage").textContent = "Username, Email နဲ့ Password အနည်းဆုံး 6 လုံး ဖြည့်ပါ။";
+    return;
+  }
+  if (state.users[email]) {
+    $("authMessage").textContent = "ဒီ Email နဲ့ Account ရှိပြီးသားပါ။ Login ဝင်ပါ။";
+    return;
+  }
+  state.users[email] = {username, password, balance:0};
+  saveState();
+  current = email;
+  startApp();
+}
+function login() {
+  const email = $("email").value.trim().toLowerCase();
+  const password = $("password").value;
+  const user = state.users[email];
+  if (!user || user.password !== password) {
+    $("authMessage").textContent = "Login မအောင်မြင်ပါ။ Demo Account အသစ်ဖွင့်ပါ။";
+    return;
+  }
+  current = email;
+  startApp();
+}
+function startApp() {
+  $("auth").style.display = "none";
+  $("app").style.display = "block";
+  $("welcome").textContent = "Welcome, " + state.users[current].username;
+  render();
+}
+function logout() {
+  current = null;
+  showLogin();
+}
+function openPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  $(id).classList.add("active");
+  render();
+}
+function addActivity(text) {
+  state.activity.unshift({user:current, text, time:new Date().toLocaleString()});
+  state.activity = state.activity.slice(0,50);
+}
+function createCampaign() {
+  const title = $("campaignName").value.trim();
+  const url = $("campaignUrl").value.trim();
+  const reward = Number($("campaignReward").value);
+  if (!title || !/^https:\/\/(t\.me|telegram\.me)\//i.test(url) || !Number.isInteger(reward) || reward < 1) {
+    $("campaignMessage").textContent = "Campaign Name၊ မှန်ကန်သော Telegram URL နဲ့ Reward ဖြည့်ပါ။";
+    return;
+  }
+  const campaign = {
+    id: Date.now(), owner:current, title, url, reward,
+    status:"Demo", createdAt:new Date().toLocaleString()
+  };
+  state.campaigns.unshift(campaign);
+  addActivity("Campaign created: " + title);
+  saveState();
+  $("campaignMessage").textContent = "Demo Campaign ဖန်တီးပြီးပါပြီ။ Server ပေါ် မတင်ရသေးပါ။";
+  $("campaignName").value = "";
+  $("campaignUrl").value = "";
+  $("campaignReward").value = "";
+  render();
+}
+function requestPayment() {
+  const ref = $("transactionRef").value.trim();
+  if (!ref) {
+    $("paymentMessage").textContent = "Demo Reference ထည့်ပါ။ တကယ့်ငွေ မလွှဲပါနှင့်။";
+    return;
+  }
+  const item = {
+    id:Date.now(), user:current,
+    amount:Number($("coinPackage").value),
+    method:$("paymentMethod").value,
+    ref, status:"Demo Only",
+    time:new Date().toLocaleString()
+  };
+  state.payments.unshift(item);
+  addActivity("Demo payment request: " + item.amount + " TGB");
+  saveState();
+  $("transactionRef").value = "";
+  $("paymentMessage").textContent = "Demo Request သိမ်းဆည်းပြီးပါပြီ။ Coin မတိုးပါ။";
+  render();
+}
+function showActivity() {
+  $("walletHistory").innerHTML = state.activity
+    .filter(x => x.user === current)
+    .map(x => `<div class="item">${safe(x.text)}<br><small class="muted">${safe(x.time)}</small></div>`)
+    .join("") || "မှတ်တမ်းမရှိသေးပါ။";
+}
+function render() {
+  if (!current) return;
+  const user = state.users[current];
+  $("balance").textContent = user.balance;
+  $("balance2").textContent = user.balance;
+  const campaigns = state.campaigns.filter(x => x.owner === current);
+  const payments = state.payments.filter(x => x.user === current);
+  $("campaignCount").textContent = campaigns.length;
+  $("paymentCount").textContent = payments.length;
+  $("taskCount").textContent = 0;
+
+  $("myCampaigns").innerHTML = campaigns.map(c =>
+    `<div class="item"><b>${safe(c.title)}</b>
+    <p class="muted">Reward: ${safe(c.reward)} TGB · ${safe(c.status)}</p>
+    <a href="${safe(c.url)}" target="_blank" rel="noopener">Open Telegram</a></div>`
+  ).join("") || "Campaign မရှိသေးပါ။";
+
+  $("payments").innerHTML = payments.map(p =>
+    `<div class="item"><b>${safe(p.amount)} TGB — ${safe(p.method)}</b>
+    <p class="muted">Status: ${safe(p.status)}</p>
+    <small>${safe(p.time)}</small></div>`
+  ).join("") || "Request မရှိသေးပါ။";
+
+  $("taskList").innerHTML = state.campaigns
+    .filter(c => c.owner !== current)
+    .map(c => `<div class="item"><b>${safe(c.title)}</b>
+      <p class="muted">Demo Reward: ${safe(c.reward)} TGB</p>
+      <a href="${safe(c.url)}" target="_blank" rel="noopener">Open Telegram</a>
+      <p class="muted">Demo သာဖြစ်ပြီး Join အတည်ပြုခြင်းနှင့် Reward ပေးခြင်း မပါသေးပါ။</p>
+    </div>`).join("") || "Task မရှိသေးပါ။";
+
+  showActivity();
+}
+</script>
+</body>
+</html>
